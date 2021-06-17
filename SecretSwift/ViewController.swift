@@ -21,6 +21,7 @@ class ViewController: UIViewController {
 	}
 
 	@IBAction func authenticateTapped(_ sender: Any) {
+		unlockSecretMessage()
 	}
 
 	@objc func adjustForKeyboard(notification: Notification) {
