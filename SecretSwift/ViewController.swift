@@ -34,9 +34,16 @@ class ViewController: UIViewController {
 					if success {
 						self?.unlockSecretMessage()
 					} else {
-						let ac = UIAlertController(title: "Authentication failed", message: "Your identity could not be verified: please try again.", preferredStyle: .alert)
-						ac.addAction(UIAlertAction(title: "OK", style: .default))
-						self?.present(ac, animated: true)
+						if let error = authenticationError {
+							switch error._code {
+							case LAError.Code.userCancel.rawValue:
+								break
+							default:
+								let ac = UIAlertController(title: "Authentication failed", message: "Your identity could not be verified: please try again.", preferredStyle: .alert)
+								ac.addAction(UIAlertAction(title: "OK", style: .default))
+								self?.present(ac, animated: true)
+							}
+						}
 					}
 				}
 			}
