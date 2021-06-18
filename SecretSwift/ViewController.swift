@@ -48,9 +48,38 @@ class ViewController: UIViewController {
 				}
 			}
 		} else {
-			let ac = UIAlertController(title: "Biometry unavailable", message: "Your device is not configured for biometric authentication.", preferredStyle: .alert)
-			ac.addAction(UIAlertAction(title: "OK", style: .default))
+			authenticateWithPassword()
+		}
+	}
+
+	func authenticateWithPassword() {
+		let passwordKey = "SecretPassword"
+		if let password = KeychainWrapper.standard.string(forKey: passwordKey) {
+			let ac = UIAlertController(title: "Authenticate with password", message: "Please enter your password.", preferredStyle: .alert)
+			ac.addTextField()
+			ac.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] action in
+				if let answer = ac.textFields?[0].text, answer == password {
+					self?.unlockSecretMessage()
+				} else {
+					// TODO: authentication failed
+				}
+			})
 			present(ac, animated: true)
+		} else {
+			// TODO: Enable Biometry or use a password?
+			// if use a password
+			let ac = UIAlertController(title: "Authenticate with password", message: "Please enter a new password.", preferredStyle: .alert)
+			ac.addTextField()
+			ac.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] action in
+				if let password = ac.textFields?[0].text, !password.isEmpty {
+					KeychainWrapper.standard.set(password, forKey: passwordKey)
+					self?.unlockSecretMessage()
+				} else {
+					// TODO: no password provided
+				}
+			})
+			present(ac, animated: true)
+			// else enable biometry
 		}
 	}
 
